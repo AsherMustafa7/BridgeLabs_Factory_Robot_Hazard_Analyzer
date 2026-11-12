@@ -5,9 +5,20 @@ import java.util.Scanner;
 
 public class FactoryRobotHazardAnalyzer {
 
+    // Validates inputs and calculates the hazard risk
     public double calculateHazardRisk(double armPrecision,
                                      int workerDensity,
                                      String machineryState) {
+
+        if (armPrecision < 0.0 || armPrecision > 1.0) {
+            System.out.println("Error: Arm precision must be 0.0-1.0");
+            return -1;
+        }
+
+        if (workerDensity < 1 || workerDensity > 20) {
+            System.out.println("Error: Worker density must be 1-20");
+            return -1;
+        }
 
         double machineRiskFactor;
 
@@ -36,25 +47,15 @@ public class FactoryRobotHazardAnalyzer {
         System.out.print("Enter Machinery State (Worn/Faulty/Critical): ");
         String machineryState = sc.next();
 
-        // Validate arm precision
-        if (armPrecision < 0.0 || armPrecision > 1.0) {
-            System.out.println("Error: Arm precision must be 0.0-1.0");
-        }
+        FactoryRobotHazardAnalyzer analyzer =
+                new FactoryRobotHazardAnalyzer();
 
-        // Validate worker density
-        else if (workerDensity < 1 || workerDensity > 20) {
-            System.out.println("Error: Worker density must be 1-20");
-        }
+        // main() only calls the method and displays the result
+        double risk = analyzer.calculateHazardRisk(
+                armPrecision, workerDensity, machineryState
+        );
 
-        // Calculate only if numeric inputs are valid
-        else {
-            FactoryRobotHazardAnalyzer analyzer =
-                    new FactoryRobotHazardAnalyzer();
-
-            double risk = analyzer.calculateHazardRisk(
-                    armPrecision, workerDensity, machineryState
-            );
-
+        if (risk != -1) {
             System.out.println("Robot Hazard Risk Score: " + risk);
         }
 

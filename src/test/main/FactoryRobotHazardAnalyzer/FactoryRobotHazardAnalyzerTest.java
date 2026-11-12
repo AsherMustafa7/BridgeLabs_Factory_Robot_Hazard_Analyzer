@@ -3,64 +3,34 @@ package FactoryRobotHazardAnalyzer;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.PrintStream;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FactoryRobotHazardAnalyzerTest {
 
-    private String runProgram(String input) {
+    FactoryRobotHazardAnalyzer analyzer =
+            new FactoryRobotHazardAnalyzer();
 
-        InputStream originalInput = System.in;
-        PrintStream originalOutput = System.out;
+    @Test
+    void shouldCalculateHazardRisk() {
 
-        ByteArrayInputStream testInput =
-                new ByteArrayInputStream(input.getBytes());
+        double result = analyzer.calculateHazardRisk(0.5, 10, "Critical");
 
-        ByteArrayOutputStream output =
-                new ByteArrayOutputStream();
-
-        System.setIn(testInput);
-        System.setOut(new PrintStream(output));
-
-        try {
-            FactoryRobotHazardAnalyzer.main(new String[]{});
-        } finally {
-            System.setIn(originalInput);
-            System.setOut(originalOutput);
-        }
-
-        return output.toString();
+        assertEquals(37.5, result, 0.001);
     }
 
     @Test
     void shouldRejectInvalidArmPrecision() {
 
-        String result = runProgram("1.5\n10\nWorn\n");
+        double result = analyzer.calculateHazardRisk(1.5, 10, "Worn");
 
-        assertTrue(result.contains(
-                "Error: Arm precision must be 0.0-1.0"
-        ));
+        assertEquals(-1, result);
     }
 
     @Test
     void shouldRejectInvalidWorkerDensity() {
 
-        String result = runProgram("0.5\n25\nWorn\n");
+        double result = analyzer.calculateHazardRisk(0.5, 25, "Worn");
 
-        assertTrue(result.contains(
-                "Error: Worker density must be 1-20"
-        ));
-    }
-
-    @Test
-    void shouldCalculateRiskForValidInputs() {
-
-        String result = runProgram("0.5\n10\nCritical\n");
-
-        assertTrue(result.contains("Robot Hazard Risk Score: 37.5"));
+        assertEquals(-1, result);
     }
 }

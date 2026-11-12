@@ -5,32 +5,46 @@ import java.util.Scanner;
 
 public class FactoryRobotHazardAnalyzer {
 
+    // Maps machinery state to its risk factor
+    private double getMachineRiskFactor(String machineryState)
+            throws RobotSafetyException {
+
+        switch (machineryState) {
+            case "Worn":
+                return 1.3;
+
+            case "Faulty":
+                return 2.0;
+
+            case "Critical":
+                return 3.0;
+
+            default:
+                throw new RobotSafetyException(
+                        "Error: Unsupported machinery state"
+                );
+        }
+    }
+
     public double calculateHazardRisk(double armPrecision,
-                                     int workerDensity,
-                                     String machineryState)
-                                     throws RobotSafetyException {
+                                      int workerDensity,
+                                      String machineryState)
+            throws RobotSafetyException {
 
         if (armPrecision < 0.0 || armPrecision > 1.0) {
             throw new RobotSafetyException(
-                    "Arm precision must be between 0.0 and 1.0"
+                    "Error: Arm precision must be 0.0-1.0"
             );
         }
 
         if (workerDensity < 1 || workerDensity > 20) {
             throw new RobotSafetyException(
-                    "Worker density must be between 1 and 20"
+                    "Error: Worker density must be 1-20"
             );
         }
 
-        double machineRiskFactor;
-
-        if (machineryState.equals("Worn")) {
-            machineRiskFactor = 1.3;
-        } else if (machineryState.equals("Faulty")) {
-            machineRiskFactor = 2.0;
-        } else {
-            machineRiskFactor = 3.0;
-        }
+        double machineRiskFactor =
+                getMachineRiskFactor(machineryState);
 
         return ((1.0 - armPrecision) * 15.0)
                 + (workerDensity * machineRiskFactor);
@@ -60,7 +74,7 @@ public class FactoryRobotHazardAnalyzer {
             System.out.println("Robot Hazard Risk Score: " + risk);
 
         } catch (RobotSafetyException e) {
-            System.out.println("Safety Error: " + e.getMessage());
+            System.out.println(e.getMessage());
         }
 
         sc.close();

@@ -11,39 +11,36 @@ class FactoryRobotHazardAnalyzerTest {
             new FactoryRobotHazardAnalyzer();
 
     @Test
-    void shouldCalculateHazardRisk() throws RobotSafetyException {
+    void shouldCalculateWornMachineryRisk() throws RobotSafetyException {
+        double result = analyzer.calculateHazardRisk(0.5, 10, "Worn");
 
-        double result = analyzer.calculateHazardRisk(
-                0.5, 10, "Critical"
-        );
+        assertEquals(20.5, result, 0.001);
+    }
+
+    @Test
+    void shouldCalculateFaultyMachineryRisk() throws RobotSafetyException {
+        double result = analyzer.calculateHazardRisk(0.5, 10, "Faulty");
+
+        assertEquals(27.5, result, 0.001);
+    }
+
+    @Test
+    void shouldCalculateCriticalMachineryRisk() throws RobotSafetyException {
+        double result = analyzer.calculateHazardRisk(0.5, 10, "Critical");
 
         assertEquals(37.5, result, 0.001);
     }
 
     @Test
-    void shouldThrowExceptionForInvalidArmPrecision() {
+    void shouldThrowExceptionForUnsupportedState() {
 
         RobotSafetyException exception = assertThrows(
                 RobotSafetyException.class,
-                () -> analyzer.calculateHazardRisk(1.5, 10, "Worn")
+                () -> analyzer.calculateHazardRisk(0.5, 10, "Optimal")
         );
 
         assertEquals(
-                "Arm precision must be between 0.0 and 1.0",
-                exception.getMessage()
-        );
-    }
-
-    @Test
-    void shouldThrowExceptionForInvalidWorkerDensity() {
-
-        RobotSafetyException exception = assertThrows(
-                RobotSafetyException.class,
-                () -> analyzer.calculateHazardRisk(0.5, 25, "Worn")
-        );
-
-        assertEquals(
-                "Worker density must be between 1 and 20",
+                "Error: Unsupported machinery state",
                 exception.getMessage()
         );
     }

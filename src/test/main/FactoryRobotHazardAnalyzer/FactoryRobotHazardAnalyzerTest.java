@@ -3,43 +3,40 @@ package FactoryRobotHazardAnalyzer;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.PrintStream;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FactoryRobotHazardAnalyzerTest {
 
     @Test
-    void shouldAcceptAndDisplayRobotInputs() {
+    void shouldCalculateCriticalMachineryRisk() {
 
-        String input = "0.8\n10\nWorn\n";
+        FactoryRobotHazardAnalyzer analyzer =
+                new FactoryRobotHazardAnalyzer();
 
-        InputStream originalInput = System.in;
-        PrintStream originalOutput = System.out;
+        double result = analyzer.calculateHazardRisk(0.5, 10, "Critical");
 
-        ByteArrayInputStream testInput =
-                new ByteArrayInputStream(input.getBytes());
+        assertEquals(37.5, result, 0.001);
+    }
 
-        ByteArrayOutputStream output =
-                new ByteArrayOutputStream();
+    @Test
+    void shouldCalculateWornMachineryRisk() {
 
-        System.setIn(testInput);
-        System.setOut(new PrintStream(output));
+        FactoryRobotHazardAnalyzer analyzer =
+                new FactoryRobotHazardAnalyzer();
 
-        try {
-            FactoryRobotHazardAnalyzer.main(new String[]{});
-        } finally {
-            System.setIn(originalInput);
-            System.setOut(originalOutput);
-        }
+        double result = analyzer.calculateHazardRisk(0.5, 10, "Worn");
 
-        String result = output.toString();
+        assertEquals(20.5, result, 0.001);
+    }
 
-        assertTrue(result.contains("Arm Precision: 0.8"));
-        assertTrue(result.contains("Worker Density: 10"));
-        assertTrue(result.contains("Machinery State: Worn"));
+    @Test
+    void shouldCalculateFaultyMachineryRisk() {
+
+        FactoryRobotHazardAnalyzer analyzer =
+                new FactoryRobotHazardAnalyzer();
+
+        double result = analyzer.calculateHazardRisk(0.5, 10, "Faulty");
+
+        assertEquals(27.5, result, 0.001);
     }
 }

@@ -3,7 +3,7 @@ package FactoryRobotHazardAnalyzer;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class FactoryRobotHazardAnalyzerTest {
 
@@ -11,26 +11,40 @@ class FactoryRobotHazardAnalyzerTest {
             new FactoryRobotHazardAnalyzer();
 
     @Test
-    void shouldCalculateHazardRisk() {
+    void shouldCalculateHazardRisk() throws RobotSafetyException {
 
-        double result = analyzer.calculateHazardRisk(0.5, 10, "Critical");
+        double result = analyzer.calculateHazardRisk(
+                0.5, 10, "Critical"
+        );
 
         assertEquals(37.5, result, 0.001);
     }
 
     @Test
-    void shouldRejectInvalidArmPrecision() {
+    void shouldThrowExceptionForInvalidArmPrecision() {
 
-        double result = analyzer.calculateHazardRisk(1.5, 10, "Worn");
+        RobotSafetyException exception = assertThrows(
+                RobotSafetyException.class,
+                () -> analyzer.calculateHazardRisk(1.5, 10, "Worn")
+        );
 
-        assertEquals(-1, result);
+        assertEquals(
+                "Arm precision must be between 0.0 and 1.0",
+                exception.getMessage()
+        );
     }
 
     @Test
-    void shouldRejectInvalidWorkerDensity() {
+    void shouldThrowExceptionForInvalidWorkerDensity() {
 
-        double result = analyzer.calculateHazardRisk(0.5, 25, "Worn");
+        RobotSafetyException exception = assertThrows(
+                RobotSafetyException.class,
+                () -> analyzer.calculateHazardRisk(0.5, 25, "Worn")
+        );
 
-        assertEquals(-1, result);
+        assertEquals(
+                "Worker density must be between 1 and 20",
+                exception.getMessage()
+        );
     }
 }

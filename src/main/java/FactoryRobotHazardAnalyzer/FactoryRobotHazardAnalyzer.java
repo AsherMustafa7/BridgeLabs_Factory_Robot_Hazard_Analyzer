@@ -5,19 +5,21 @@ import java.util.Scanner;
 
 public class FactoryRobotHazardAnalyzer {
 
-    // Validates inputs and calculates the hazard risk
     public double calculateHazardRisk(double armPrecision,
                                      int workerDensity,
-                                     String machineryState) {
+                                     String machineryState)
+                                     throws RobotSafetyException {
 
         if (armPrecision < 0.0 || armPrecision > 1.0) {
-            System.out.println("Error: Arm precision must be 0.0-1.0");
-            return -1;
+            throw new RobotSafetyException(
+                    "Arm precision must be between 0.0 and 1.0"
+            );
         }
 
         if (workerDensity < 1 || workerDensity > 20) {
-            System.out.println("Error: Worker density must be 1-20");
-            return -1;
+            throw new RobotSafetyException(
+                    "Worker density must be between 1 and 20"
+            );
         }
 
         double machineRiskFactor;
@@ -50,13 +52,15 @@ public class FactoryRobotHazardAnalyzer {
         FactoryRobotHazardAnalyzer analyzer =
                 new FactoryRobotHazardAnalyzer();
 
-        // main() only calls the method and displays the result
-        double risk = analyzer.calculateHazardRisk(
-                armPrecision, workerDensity, machineryState
-        );
+        try {
+            double risk = analyzer.calculateHazardRisk(
+                    armPrecision, workerDensity, machineryState
+            );
 
-        if (risk != -1) {
             System.out.println("Robot Hazard Risk Score: " + risk);
+
+        } catch (RobotSafetyException e) {
+            System.out.println("Safety Error: " + e.getMessage());
         }
 
         sc.close();
